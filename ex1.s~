@@ -96,14 +96,54 @@ en_gpio_clk:
 	str r2, [r1, #CMU_HFPERCLKEN0]
 	
 	
-set_leds:	
+init_leds:	
 	ldr r1, gpio_pa_base_addr
 	
-	mov r2, #0x2
-	str r2, [r1, #GPIO_CTRL]
-	mov r2, #0x55555555
-	str r1, [r1, #GPIO_MODEH]
+	mov r3, #0x2
+	str r3, [r1, #GPIO_CTRL]
+	mov r3, #0x55555555
+	str r3, [r1, #GPIO_MODEH]
+	mov r3, #0xaaaaaaaa
 	
+	str r3, [r1, #GPIO_DOUT]
+	mov r4, #0xff
+	mov r7, #0
+	
+init_btns:
+	ldr r2, gpio_pc_base_addr
+	mov r3, #0x33333333
+	str r3, [r2, #GPIO_MODEL]
+	mov r3, #0xFF
+	str r3, [r2, #GPIO_DOUT]
+	
+loop:
+	LDR  r3, [r2, #GPIO_DIN]
+	MVN  r3, r3
+	EOR  r4, r4, r3  //Create diff-string
+	AND  r4, r4, r3  //Only check pressed buttons
+check_left:
+	AND  r5, r4, #1  //Check button 1 only
+	CBZ  r5, check_right
+	SUB  r7, r7, #1
+	IT   mi // If negative:
+	MOVMI  r7, #0
+	B end_of_loop	
+check_right:
+	AND  r5, r4, #0x4  //Check button 3 only
+	CBZ  r5, end_of_loop
+	ADD  r7, r7, #1
+	CMP  r7, #8
+	IT   eq
+	MOVEQ  r7, #7
+	B end_of_loop
+end_of_loop:
+	MOV  r5, #1
+	LSL  r5, r7
+	MVN  r5, r5
+	LSL  r5, #8
+	STR  r5, [r1, #GPIO_DOUT]
+	MOV  r4, r3
+	B    loop
 	
 	
 cmu_base_addr:
@@ -111,6 +151,10 @@ cmu_base_addr:
 
 gpio_pa_base_addr:
 	.long GPIO_PA_BASE
+
+gpio_pc_base_addr:
+	.long GPIO_PC_BASE
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
