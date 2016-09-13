@@ -82,69 +82,114 @@
 	.type   _reset, %function
 	.thumb_func
 _reset: 
-	mov R1, 0x12121212
+	B     en_gpio_clk
 
+// Enables the clock for the GPIO-controller in order to use it
 en_gpio_clk:
-	ldr r1, cmu_base_addr
+	LDR   R1, cmu_base_addr
 	
-	ldr r2, [r1, #CMU_HFPERCLKEN0]
+	// Loads the current value for the register into R2:
+	LDR   R2, [r1, #CMU_HFPERCLKEN0]
 	
-	mov r3, #1
-	lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
-	orr r2, r2, r3
+	// Sets GPIO-bit to 1 by bit-shift and OR:
+	MOV   R3, #1
+	LSL   R3, R3, #CMU_HFPERCLKEN0_GPIO
+	ORR   R2, R2, R3
 	
-	str r2, [r1, #CMU_HFPERCLKEN0]
+	// Stores the result:
+	STR   R2, [R1, #CMU_HFPERCLKEN0]
 	
-	
+// Initializes the LEDs	
 init_leds:	
-	ldr r1, gpio_pa_base_addr
+	LDR   R1, gpio_pa_base_addr
 	
-	mov r3, #0x2
-	str r3, [r1, #GPIO_CTRL]
-	mov r3, #0x55555555
-	str r3, [r1, #GPIO_MODEH]
-	mov r3, #0xaaaaaaaa
+	MOV   R3, #0x2
+	STR   R3, [R1, #GPIO_CTRL]
+	MOV   R3, #0x55555555
+	STR   R3, [R1, #GPIO_MODEH]
+	MOV   R3, #0xAAAAAAAA
 	
-	str r3, [r1, #GPIO_DOUT]
-	mov r4, #0xff
-	mov r7, #0
-	
+	STR   R3, [R1, #GPIO_DOUT]
+	MOV   R4, #0xFF
+	MOV   R7, #0
+
+// Initalizes the buttons	
 init_btns:
-	ldr r2, gpio_pc_base_addr
-	mov r3, #0x33333333
-	str r3, [r2, #GPIO_MODEL]
-	mov r3, #0xFF
-	str r3, [r2, #GPIO_DOUT]
+	LDR   R2, gpio_pc_base_addr
 	
+	// Set GPIO mode to input
+	MOV   R3, #0x33333333
+	STR   R3, [R2, #GPIO_MODEL]
+	
+	// Activate internal pull-up resistors (the buttons dont have any)
+	MOV   R3, #0xFF
+	STR   R3, [R2, #GPIO_DOUT]
+	
+// Main loop
+// R4 is used for storing the last state between loops
 loop:
-	LDR  r3, [r2, #GPIO_DIN]
-	MVN  r3, r3
-	EOR  r4, r4, r3  //Create diff-string
-	AND  r4, r4, r3  //Only check pressed buttons
+        // Reads current button state
+	LDR   R3, [R2, #GPIO_DIN]
+	
+	// Inverts the values (1 meaning pressed equals less headache)
+	MVN   R3, R3
+	
+	// Finds the diff between last and current state
+	EOR   R4, R4, R3
+	
+	// Filters on pressed-state (we only respond to btn-down)
+	AND   R4, R4, R3
+	
 check_left:
-	AND  r5, r4, #1  //Check button 1 only
-	CBZ  r5, check_right
-	SUB  r7, r7, #1
-	CMP  r7, #-1
-	IT   eq // If negative:
-	MOVEQ  r7, #0
-	B end_of_loop	
+	// Filter out all but button 1
+	AND   R5, R4, #1
+	
+	// If BTN1 changed AND is pressed, update leds, else branch
+	CBZ   R5, check_right
+	
+	// Subtract 1 from the current led-position
+	SUB   R7, R7, #1
+	
+	// Check if we got outside range (R7 < 0)
+	CMP   R7, #-1
+	IT    EQ
+	// Set back to 0 if we did
+	MOVEQ R7, #0
+	
 check_right:
-	AND  r5, r4, #0x4  //Check button 3 only
-	CBZ  r5, end_of_loop
-	ADD  r7, r7, #1
-	CMP  r7, #8
-	IT   eq
-	MOVEQ  r7, #7
-	B end_of_loop
+	// Filter out all but button 3
+	AND   R5, R4, #0x4
+	
+	// If changed AND pressed, update leds, else branch
+	CBZ   R5, end_of_loop
+	
+	// Add 1 to current led-position
+	ADD   R7, R7, #1
+	
+	// Check if we got outside range (R7 > 7)
+	CMP   R7, #8
+	IT    EQ
+	// Set back to 7 if we did
+	MOVEQ R7, #7
+	
 end_of_loop:
-	MOV  r5, #1
-	LSL  r5, r7
-	MVN  r5, r5
-	LSL  r5, #8
-	STR  r5, [r1, #GPIO_DOUT]
-	MOV  r4, r3
-	B    loop
+	// Sets R5s R7th bit to 1, rest to 0
+	MOV   R5, #1
+	LSL   R5, R7
+	
+	// Invert it (LEDs are active-low)
+	MVN   R5, R5
+	
+	// Shift them 8 bits (LEDs start at bit 8)
+	LSL   R5, #8
+	
+	// Update the LED values
+	STR   R5, [R1, #GPIO_DOUT]
+	
+	// Store current button state for comparing when looping
+	MOV   R4, R3
+	
+	B     loop
 	
 	
 cmu_base_addr:
