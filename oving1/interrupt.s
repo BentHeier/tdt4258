@@ -134,7 +134,7 @@ init_interrupt:
 	STR   R3, [R6, #GPIO_IEN]
 	
 	LDR   R6, iser0_addr
-	LDR   R3, =0x802
+	MOV   R3, #0x802
 	STR   R3, [R6]	
 	
 	LDR   R6, scr_addr
@@ -175,12 +175,9 @@ scr_addr:
 
     .thumb_func
 gpio_handler:  
-	ldr R3, [R1, #GPIO_DOUT]
-	mvn R3, R3 
-	str R3, [R1, #GPIO_DOUT]
-	ldr R6, gpio_base_addr
-	ldr R3, [R6, #GPIO_IF]
-	str R3, [R6, #GPIO_IFC]
+	LDR R6, gpio_base_addr
+	LDR R3, [R6, #GPIO_IF]
+	STR R3, [R6, #GPIO_IFC]
 
         // Reads current button state
 	LDR   R3, [R2, #GPIO_DIN]
