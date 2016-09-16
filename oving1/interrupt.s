@@ -179,17 +179,11 @@ gpio_handler:
 	LDR R3, [R6, #GPIO_IF]
 	STR R3, [R6, #GPIO_IFC]
 
-        // Reads current button state
-	LDR   R3, [R2, #GPIO_DIN]
+    // Reads current button state
+	LDR   R4, [R2, #GPIO_DIN]
 	
 	// Inverts the values (1 meaning pressed equals less headache)
-	MVN   R3, R3
-	
-	// Finds the diff between last and current state
-	EOR   R4, R4, R3
-	
-	// Filters on pressed-state (we only respond to btn-down)
-	AND   R4, R4, R3
+	MVN   R4, R4
 	
 check_left:
 	// Filter out all but button 1
@@ -212,7 +206,7 @@ check_right:
 	AND   R5, R4, #0x4
 	
 	// If changed AND pressed, update leds, else branch
-	CBZ   R5, end_of_loop
+	CBZ   R5, bx_label
 	
 	// Add 1 to current led-position
 	ADD   R7, R7, #1
@@ -237,9 +231,7 @@ end_of_loop:
 	// Update the LED values
 	STR   R5, [R1, #GPIO_DOUT]
 	
-	// Store current button state for comparing when looping
-	MOV   R4, R3
-	
+bx_label:
 	BX    lr
 	
 
