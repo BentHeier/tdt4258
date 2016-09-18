@@ -141,7 +141,7 @@ init_interrupt:
 	MOV   R3, #6
 	STR   R3, [R6]
 	WFI
-	
+	B .
 
 loop:
 	B     loop
@@ -178,64 +178,64 @@ scr_addr:
 
     .thumb_func
 gpio_handler:  
-	LDR R3, [R1, #GPIO_DOUT]
-        MVN R3, R3
-        STR R3, [R1, #GPIO_DOUT]
+	
 	LDR R6, gpio_base_addr
 	LDR R3, [R6, #GPIO_IF]
 	STR R3, [R6, #GPIO_IFC]
-
+    LDR R3, [R1, #GPIO_DOUT]
+        MVN R3, R3
+        STR R3, [R1, #GPIO_DOUT]
 
 	BX    lr
 	
-//check_left:
+check_left:
 	// Filter out all but button 1
-//	AND   R5, R4, #1
+	AND   R5, R4, #1
 	
 	// If BTN1 changed AND is pressed, update leds, else branch
-//	CBZ   R5, check_right
+	CBZ   R5, check_right
 	
 	// Subtract 1 from the current led-position
-//	SUB   R7, R7, #1
+	SUB   R7, R7, #1
 	
 	// Check if we got outside range (R7 < 0)
-//	CMP   R7, #-1
-//	IT    EQ
+	CMP   R7, #-1
+	IT    EQ
 	// Set back to 0 if we did
-//	MOVEQ R7, #0
+	MOVEQ R7, #0
 	
-//check_right:
+check_right:
 	// Filter out all but button 3
-//	AND   R5, R4, #0x4
+	AND   R5, R4, #0x4
 	
 	// If changed AND pressed, update leds, else branch
-//	CBZ   R5, bx_label
+	CBZ   R5, bx_label
 	
 	// Add 1 to current led-position
-//	ADD   R7, R7, #1
+	ADD   R7, R7, #1
 	
 	// Check if we got outside range (R7 > 7)
-//	CMP   R7, #8
-//	IT    EQ
+	CMP   R7, #8
+	IT    EQ
 	// Set back to 7 if we did
-//	MOVEQ R7, #7
+	MOVEQ R7, #7
 	
-//end_of_loop:
+end_of_loop:
 	// Sets R5s R7th bit to 1, rest to 0
-//	MOV   R5, #1
-//	LSL   R5, R7
+	MOV   R5, #1
+	LSL   R5, R7
 	
 	// Invert it (LEDs are active-low)
-//	MVN   R5, R5
+	MVN   R5, R5
 	
 	// Shift them 8 bits (LEDs start at bit 8)
-//	LSL   R5, #8
+	LSL   R5, #8
 	
 	// Update the LED values
-//	STR   R5, [R1, #GPIO_DOUT]
+	STR   R5, [R1, #GPIO_DOUT]
 	
-//bx_label:
-//	BX    lr
+bx_label:
+	BX    lr
 	
 
 /////////////////////////////////////////////////////////////////////////////
