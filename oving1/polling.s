@@ -82,20 +82,13 @@
 	.type   _reset, %function
 	.thumb_func
 _reset: 
-    BL    init
-    B     loop
-
-init:
-    PUSH  {lr}
     BL    en_gpio_clk
-init_2:
     BL    init_leds
     BL    init_btns
-    POP   {pc}
+    BL    loop
 
 // Enables the clock for the GPIO-controller in order to use it
 en_gpio_clk:
-    PUSH  {lr}
     LDR   R1, cmu_base_addr
 	
     // Loads the current value for the register into R2:
@@ -109,12 +102,11 @@ en_gpio_clk:
     // Stores the result:
     STR   R2, [R1, #CMU_HFPERCLKEN0]
 
-    POP   {R10}
-    MOV   pc,R10
+    // Return
+    BX    LR
 	
 // Initializes the LEDs	
 init_leds:
-    PUSH  {lr}	
     LDR   R1, gpio_pa_base_addr
 	
     // Set high output level
@@ -128,16 +120,15 @@ init_leds:
     // Set initial LED values (off)
     MOV   R3, #0xFFFFFFFF
     STR   R3, [R1, #GPIO_DOUT]
-    // Initialize the "former button state" in R4 to none pressed
-    MOV   R4, #0xFF
     // Initialize the LED position in R7 to 0;
     MOV   R7, #0
 
-    POP   {pc}
+    // Return
+    BX    LR
+
 
 // Initalizes the buttons	
 init_btns:
-    PUSH  {lr}
     LDR   R2, gpio_pc_base_addr
 	
     // Set GPIO mode to input
@@ -148,7 +139,11 @@ init_btns:
     MOV   R3, #0xFF
     STR   R3, [R2, #GPIO_DOUT]
 
-    POP   {pc}
+    // Initialize the "former button state" in R4 to none pressed
+    MOV   R4, #0xFF
+
+    // Return
+    BX    LR
 	
 // Main loop
 // R4 is used for storing the last state between loops
@@ -186,7 +181,7 @@ check_right:
     AND   R5, R4, #0x4
 	
     // If changed AND pressed, update leds, else branch
-	CBZ   R5, end_of_loop
+    CBZ   R5, end_of_loop
 	
     // Add 1 to current led-position
     ADD   R7, R7, #1
@@ -236,7 +231,7 @@ gpio_pc_base_addr:
 
     .thumb_func
 gpio_handler:  
-	
+	b .  // do nothing	
 
 /////////////////////////////////////////////////////////////////////////////
 

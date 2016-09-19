@@ -143,10 +143,9 @@ init_interrupt:
 	WFI
 	B .
 
-loop:
-	B     loop
-
-	
+// DO *NOT* REMOVE THE FOLLOWING TWO LINES. THINGS *WILL* STOP WORKING.
+bent:
+	NOP // Because reasons	
 
 
 	
@@ -178,19 +177,15 @@ scr_addr:
 
     .thumb_func
 gpio_handler:  
-	
+	// Set IFC-register to IF-register to clear interupt flags. Otherwise
+        // we will keep running the handler.
 	LDR R6, gpio_base_addr
 	LDR R3, [R6, #GPIO_IF]
 	STR R3, [R6, #GPIO_IFC]
-    LDR R3, [R1, #GPIO_DOUT]
-        MVN R3, R3
-        STR R3, [R1, #GPIO_DOUT]
-
-	BX    lr
 	
 check_left:
 	// Filter out all but button 1
-	AND   R5, R4, #1
+	AND   R5, R3, #1
 	
 	// If BTN1 changed AND is pressed, update leds, else branch
 	CBZ   R5, check_right
@@ -203,10 +198,11 @@ check_left:
 	IT    EQ
 	// Set back to 0 if we did
 	MOVEQ R7, #0
+	B   end_of_loop
 	
 check_right:
 	// Filter out all but button 3
-	AND   R5, R4, #0x4
+	AND   R5, R3, #0x4
 	
 	// If changed AND pressed, update leds, else branch
 	CBZ   R5, bx_label
@@ -219,12 +215,11 @@ check_right:
 	IT    EQ
 	// Set back to 7 if we did
 	MOVEQ R7, #7
-	
 end_of_loop:
 	// Sets R5s R7th bit to 1, rest to 0
 	MOV   R5, #1
 	LSL   R5, R7
-	
+
 	// Invert it (LEDs are active-low)
 	MVN   R5, R5
 	
@@ -233,10 +228,10 @@ end_of_loop:
 	
 	// Update the LED values
 	STR   R5, [R1, #GPIO_DOUT]
+	BX LR
 	
 bx_label:
-	BX    lr
-	
+	BX LR	
 
 /////////////////////////////////////////////////////////////////////////////
 
