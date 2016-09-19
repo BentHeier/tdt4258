@@ -82,7 +82,12 @@
 	.type   _reset, %function
 	.thumb_func
 _reset: 
-	B     en_gpio_clk
+	BL    en_gpio_clk
+	BL    init_leds
+	BL    init_btns
+	BL    init_interrupt
+	B .
+
 
 // Enables the clock for the GPIO-controller in order to use it
 en_gpio_clk:
@@ -98,6 +103,7 @@ en_gpio_clk:
 	
 	// Stores the result:
 	STR   R2, [R1, #CMU_HFPERCLKEN0]
+	BX    LR
 	
 // Initializes the LEDs	
 init_leds:	
@@ -112,6 +118,7 @@ init_leds:
 	STR   R3, [R1, #GPIO_DOUT]
 	MOV   R4, #0xFF
 	MOV   R7, #0
+        BX    LR
 
 // Initalizes the buttons	
 init_btns:
@@ -124,6 +131,7 @@ init_btns:
 	// Activate internal pull-up resistors (the buttons dont have any)
 	MOV   R3, #0xFF
 	STR   R3, [R2, #GPIO_DOUT]
+	BX    LR
 
 init_interrupt:
 	LDR   R6, gpio_base_addr
@@ -141,7 +149,7 @@ init_interrupt:
 	MOV   R3, #6
 	STR   R3, [R6]
 	WFI
-	B .
+	B .	
 
 // DO *NOT* REMOVE THE FOLLOWING TWO LINES. THINGS *WILL* STOP WORKING.
 bent:
