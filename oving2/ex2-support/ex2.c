@@ -10,11 +10,11 @@
   registers are 16 bits.
 */
 /* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD 3500000
+#define   SAMPLE_PERIOD 65535
 
 /* Declaration of peripheral setup functions */
 void setupGPIO();
-void setupTimer(uint32_t period);
+void setupTimer(uint16_t period);
 void setupDAC();
 void setupNVIC();
 
