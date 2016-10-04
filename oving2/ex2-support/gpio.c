@@ -15,6 +15,6 @@ void setupGPIO()
 	*GPIO_PA_CTRL = 2;	/* set high drive strength */
 	*GPIO_PC_MODEL = 0x22222222;	/* set pins A0-7 as input */
 	*GPIO_PA_MODEH = 0x55555555;	/* set pins A8-15 as output */
-	*GPIO_PA_DOUT = 0x0F00;	/* turn on LEDs D4-D8 (LEDs are active low) */
+	*GPIO_PA_DOUT = 0xaa00;	/* turn on LEDs D4-D8 (LEDs are active low) */
 	*GPIO_PC_DOUT = 0xFF;	/* enable internal pull-up */
 }
