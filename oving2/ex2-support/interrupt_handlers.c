@@ -32,50 +32,95 @@ double frac(double t) {
 }
 
 uint32_t sound_0(double time) {
-	double volume = 20.0, frq = 1000.0;
-	double p = SAMPLE_PERIOD / frq;
-	double val = volume * frac(time / p);
+	double volume = 30.0, frq, length = 5.0 * SAMPLE_FREQUENCY;
+	double p;
+	double val;
+	if (time > length)
+		val = 0;
+	else {
+		if (time < length * 0.1)
+			frq = 200.0;
+		else if (time < length * 0.2)
+			frq = 300.0;
+		else if (time < length * 0.3)
+			frq = 400.0;
+		else if (time < length * 0.4)
+			frq = 800.0;
+		else if (time < length * 0.5)
+			frq = 500.0;
+		else if (time < length * 0.6)
+			frq = 200.0;
+		else if (time < length * 0.7)
+			frq = 300.0;
+		else if (time < length * 0.8)
+			frq = 500.0;
+		else if (time < length * 0.9)
+			frq = 600.0;
+		else
+			frq = 300.0;
+		p = SAMPLE_PERIOD / frq;
+		val = volume * frac(time / p);
+	}
 	return (uint32_t) val;
 }
 
 uint32_t sound_1(double time) {
-	double volume = 50.0, frq = 2000.0;
+	double volume = 30.0, frq = 50.0, length = 0.2 * SAMPLE_FREQUENCY;
 	double p = SAMPLE_PERIOD / frq;
-	double val = volume * frac(time / p);
+	double val;
+	if (time > length)
+		val = 0;
+	else
+		val = volume * frac(time / p);
 	return (uint32_t) val;
 }
 
 uint32_t sound_2(double time) {
-	double volume = 100.0, frq = 3000.0;
-	double p = SAMPLE_PERIOD / frq;
-	double val = volume * frac(time / p);
+	double volume = 30.0, frq, length = 4.0 * SAMPLE_FREQUENCY;
+	double p;
+	double val;
+	if (time > length)
+		val = 0;
+	else {
+		frq = ((length - time * 2.0) / SAMPLE_FREQUENCY) * 1000.0;
+		p = SAMPLE_PERIOD / frq;
+		val = volume * (frac(time / p) + 0.001 * (rand() % 100));
+	}
 	return (uint32_t) val;
 }
 
 uint32_t sound_3(double time) {
-	double volume = 200.0, frq = 4000.0;
-	double p = SAMPLE_PERIOD / frq;
-	double val = volume * frac(time / p);
+	double volume = 30.0, frq, length = 2.0 * SAMPLE_FREQUENCY;
+	double p;
+	double val;
+	if (time > length) {
+		val = 0;
+	} else {
+		frq = 200.0 + ((length - time) / SAMPLE_FREQUENCY) * 100.0;
+		p = SAMPLE_PERIOD / frq;
+		val = volume * (frac(time / p));
+	}
 	return (uint32_t) val;
 }
 
+void play_sound(int index) {
+	sound_index = index;
+	time = 0.0;
+}
+
 void loop() {
-	int buttons = 0, buttons_previous = 0;
-	 
+	int buttons = 0;
+	
 	while (1) {
-		buttons_previous = buttons;
 		buttons = *GPIO_PC_DIN;
 		if ((buttons & 0x1) == 0){
-			sound_index = 0;
+			play_sound(1);
 		}
 		if ((buttons & 0x2) == 0){
-			sound_index = 1;
+			play_sound(2);
 		}
 		if ((buttons & 0x4) == 0){
-			sound_index = 2;
-		}
-		if ((buttons & 0x8) == 0){
-			sound_index = 3;
+			play_sound(3);
 		}
 	}
 }
@@ -91,6 +136,8 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 	
 //	double val = volume * ((sin((time)/p) + 1.0f)/2.0f);
 	uint32_t val;
+	
+	
 	
 	switch (sound_index) {
 		case 0: val = sound_0(time); break;
