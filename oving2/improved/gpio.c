@@ -16,4 +16,9 @@ void setupGPIO()
 	//TODO why?
 	*GPIO_PA_DOUT = 0xaa00;	/* turn on LEDs D4-D8 (LEDs are active low) */
 	*GPIO_PC_DOUT = 0xFF;	/* enable internal pull-up */
+
+	// Set up interrupt handling
+	*GPIO_EXTIPSELL = 0x22222222;
+	*GPIO_EXTIFALL = 0xff;
+	*GPIO_IEN = 0xff;
 }
