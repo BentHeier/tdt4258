@@ -6,14 +6,10 @@
 #include "sounds.h"
 
 /* Declaration of peripheral setup functions */
-// TODO: Kaaanskje disse i header? Begynner å bli mye kode nå.
 void setupGPIO();
 void setupTimer(uint16_t period);
 void setupDAC();
 void setupNVIC();
-// TODO: Bør bo i en header. Eller, bør egentlig bo her. Eller, bør være
-// interrupt-basert, i improved solution.
-void loop();
 
 /* Your code will start executing here */
 int main(void)
@@ -26,14 +22,12 @@ int main(void)
 	/* Enable interrupt handling */
 	setupNVIC();
 
-	/* TODO for higher energy efficiency, sleep while waiting for interrupts
-	   instead of infinite loop for busy-waiting
-	TODO Finn ut av hvordan vi gjør dette (funker _wfi(), __wfi(), _WFI() etc?)
-		Hvis ikke kan vi asm("WFI");
-	 */
-	
-	loop();
+	// Enable deep sleep and sleep on return
+	*SCR = 2;		
 
+	while(1){
+		__asm("wfi");	
+	}
 	return 0;
 }
 
@@ -48,6 +42,8 @@ void setupNVIC()
 	 */
 	 
       	//TODO Her trenger vi GPIO også? Vil jo ikke loope og vente på knapp?
+	 *ISER0 |= (1 << 1);
+	 *ISER0 |= (1 << 11);
 	 *ISER0 |= (1 << 12);
 }
 
