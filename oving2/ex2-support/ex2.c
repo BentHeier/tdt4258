@@ -3,20 +3,16 @@
 #include <stdlib.h>
 
 #include "efm32gg.h"
-#include "misc.h"
-
-/* 
-  TODO calculate the appropriate sample period for the sound wave(s) 
-  you want to generate. The core clock (which the timer clock is derived
-  from) runs at 14 MHz by default. Also remember that the timer counter
-  registers are 16 bits.
-*/
+#include "sounds.h"
 
 /* Declaration of peripheral setup functions */
+// TODO: Kaaanskje disse i header? Begynner å bli mye kode nå.
 void setupGPIO();
 void setupTimer(uint16_t period);
 void setupDAC();
 void setupNVIC();
+// TODO: Bør bo i en header. Eller, bør egentlig bo her. Eller, bør være
+// interrupt-basert, i improved solution.
 void loop();
 
 /* Your code will start executing here */
@@ -32,6 +28,8 @@ int main(void)
 
 	/* TODO for higher energy efficiency, sleep while waiting for interrupts
 	   instead of infinite loop for busy-waiting
+	TODO Finn ut av hvordan vi gjør dette (funker _wfi(), __wfi(), _WFI() etc?)
+		Hvis ikke kan vi asm("WFI");
 	 */
 	
 	loop();
@@ -49,6 +47,7 @@ void setupNVIC()
 	   assignment.
 	 */
 	 
+      	//TODO Her trenger vi GPIO også? Vil jo ikke loope og vente på knapp?
 	 *ISER0 |= (1 << 12);
 }
 
