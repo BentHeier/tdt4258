@@ -1,13 +1,14 @@
 #include "sounds.h"
+#include "util.h"
 
 #include <stdint.h>
-
-#include "util.h"
 
 int sound_index = 0;
 double time = 0.0;
 
-uint32_t sound_0(double time) {
+// Generates a sample for the startup sound. Returns the sample.
+// time: A value which is 0.0 when the sound starts playing, and increases by 1.0 for each sample.
+uint32_t sound_get_sample_startup(double time) {
 	double volume = 30.0, frq, length = 5.0 * SAMPLE_FREQUENCY;
 	double p;
 	double val;
@@ -40,7 +41,10 @@ uint32_t sound_0(double time) {
 	return (uint32_t) val;
 }
 
-uint32_t sound_1(double time) {
+// Generates a sample for the sound 1. Returns the sample.
+// time: A value which is 0.0 when the sound starts playing, and increases by
+//       1.0 for each sample.
+uint32_t sound_get_sample_1(double time) {
 	double volume = 30.0, frq = 50.0, length = 0.2 * SAMPLE_FREQUENCY;
 	double p = SAMPLE_PERIOD / frq;
 	double val;
@@ -51,7 +55,10 @@ uint32_t sound_1(double time) {
 	return (uint32_t) val;
 }
 
-uint32_t sound_2(double time) {
+// Generates a sample for the sound 2. Returns the sample.
+// time: A value which is 0.0 when the sound starts playing, and increases by
+//       1.0 for each sample.
+uint32_t sound_get_sample_2(double time) {
 	double volume = 30.0, frq, length = 4.0 * SAMPLE_FREQUENCY;
 	double p;
 	double val;
@@ -65,7 +72,10 @@ uint32_t sound_2(double time) {
 	return (uint32_t) val;
 }
 
-uint32_t sound_3(double time) {
+// Generates a sample for the sound 3. Returns the sample.
+// time: A value which is 0.0 when the sound starts playing, and increases by
+//       1.0 for each sample.
+uint32_t sound_get_sample_3(double time) {
 	double volume = 30.0, frq, length = 2.0 * SAMPLE_FREQUENCY;
 	double p;
 	double val;
@@ -79,19 +89,22 @@ uint32_t sound_3(double time) {
 	return (uint32_t) val;
 }
 
-void play_sound(int index) {
+// Stops the current sound from playing and plays a new sound.
+// index: An index from 0 to 3 corresponding to the type of sound.
+void sound_play(int index) {
 	sound_index = index;
 	time = 0.0;
 }
 
-uint32_t sound(){
+// Returns the next sample of the sound that is currently playing.
+uint32_t sound_get_sample() {
 	uint32_t val;
 	switch (sound_index) {
-		case 0: val = sound_0(time); break;
-		case 1: val = sound_1(time); break;
-		case 2: val = sound_2(time); break;
-		case 3: val = sound_3(time); break;
+		case 0: val = sound_get_sample_startup(time); break;
+		case 1: val = sound_get_sample_1(time); break;
+		case 2: val = sound_get_sample_2(time); break;
+		case 3: val = sound_get_sample_3(time); break;
 	}
-	time += 1;
+	time += 1.0;
 	return val;
 }

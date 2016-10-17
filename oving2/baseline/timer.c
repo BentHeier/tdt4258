@@ -8,6 +8,6 @@
 void setupTimer(uint16_t period) {
 	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1; // Enables timer1 clock.
 	*TIMER1_TOP = period; // Sets the timer1 period.
-	*TIMER1_IEN = 1;
-	*TIMER1_CMD = 1;
+	*TIMER1_IEN = 1; // Enable interrupts
+	*TIMER1_CMD = 1; // Start timer
 }

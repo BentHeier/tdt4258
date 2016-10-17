@@ -5,8 +5,7 @@
 #include "sounds.h"
 
 // TIMER1 interrupt handler
-// interrupt: The interrupt to use.
-void __attribute__((interrupt)) TIMER1_IRQHandler() {
+void __attribute__ ((interrupt)) TIMER1_IRQHandler() {
 	uint32_t val = sound_get_sample();
 	*DAC0_CH0DATA = (uint32_t) val;
  	*DAC0_CH1DATA = (uint32_t) val;

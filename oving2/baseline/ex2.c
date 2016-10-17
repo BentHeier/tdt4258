@@ -29,15 +29,15 @@ int main(void) {
 		buttons = *GPIO_PC_DIN;
 		
 		if ((buttons & 0x1) == 0) {
-			play_sound(1);
+			sound_play(1);
 		}
 		
 		if ((buttons & 0x2) == 0) {
-			play_sound(2);
+			sound_play(2);
 		}
 		
 		if ((buttons & 0x4) == 0) {
-			play_sound(3);
+			sound_play(3);
 		}
 	}
 
