@@ -4,7 +4,7 @@ typedef struct {uint64_t state;  uint64_t inc;} pcg32_random_t;
 
 #define RAND_INIT {0x853c49e6748fea9bULL, 0xda3e39cb94b95bdbULL}
 
-pcg32_random_t globrand = RAND_INIT;
+pcg32_random_t globrand = RAND_INIT; 
 
 // Generates and returns a random number from 0 to 2^32-1 from an rng.
 // rng: The rng to use.

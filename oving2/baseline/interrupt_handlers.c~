@@ -12,3 +12,13 @@ void __attribute__((interrupt)) TIMER1_IRQHandler() {
  	*DAC0_CH1DATA = (uint32_t) val;
 	*TIMER1_IFC = 1;
 }
+
+// GPIO even pin interrupt handler
+// interrupt: The interrupt to use.
+void __attribute__((interrupt)) GPIO_EVEN_IRQHandler() {
+}
+
+// GPIO odd pin interrupt handler
+// interrupt: The interrupt to use.
+void __attribute__((interrupt)) GPIO_ODD_IRQHandler() {
+}

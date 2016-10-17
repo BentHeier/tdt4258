@@ -5,37 +5,49 @@
 #include "efm32gg.h"
 #include "sounds.h"
 
-// Declaration of peripheral setup functions
+/* Declaration of peripheral setup functions */
+// TODO: Kaaanskje disse i header? Begynner å bli mye kode nå.
 void setupGPIO();
 void setupTimer(uint16_t period);
 void setupDAC();
 void setupNVIC();
+// TODO: Bør bo i en header. Eller, bør egentlig bo her. Eller, bør være
+// interrupt-basert, i improved solution.
+void loop();
 
-// Main function
-int main(void) {
+/* Your code will start executing here */
+int main(void)
+{
 	/* Call the peripheral setup functions */
 	setupGPIO();
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
+
 	/* Enable interrupt handling */
 	setupNVIC();
 
-	// Enable sleep on exit.
-	*SCR = 2;		
+	/* TODO for higher energy efficiency, sleep while waiting for interrupts
+	   instead of infinite loop for busy-waiting
+	TODO Finn ut av hvordan vi gjør dette (funker _wfi(), __wfi(), _WFI() etc?)
+		Hvis ikke kan vi asm("WFI");
+	 */
+	
+	loop();
 
-	// Wait for interrupt.
-	while(1){
-		__asm("wfi");	
-	}
 	return 0;
 }
 
 void setupNVIC()
 {
-	 // Enable GPIO_EVEN and GPIO_ODD interrupts.
-	 *ISER0 |= (1 << 1);
-	 *ISER0 |= (1 << 11);
-	 // Enable TIMER1 interrupts.
+	/* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
+	   remember two things are necessary for interrupt handling:
+	   - the peripheral must generate an interrupt signal
+	   - the NVIC must be configured to make the CPU handle the signal
+	   You will need TIMER1, GPIO odd and GPIO even interrupt handling for this
+	   assignment.
+	 */
+	 
+      	//TODO Her trenger vi GPIO også? Vil jo ikke loope og vente på knapp?
 	 *ISER0 |= (1 << 12);
 }
 

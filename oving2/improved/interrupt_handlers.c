@@ -1,76 +1,53 @@
 #include <stdint.h>
+// TODO: Why tho?
 #include <stdbool.h>
 
 #include "efm32gg.h"
 #include "sounds.h"
 
-// The amount of samples of silence required before stopping timer.
-#define TIMEOUT 10000
-
-// Start playing a sound by index i.
-void start_sound(int i) {
-	// Disable deep sleep (This is necessary for timer to work).
-	*SCR = 2;
-	// Select sound
-	play_sound(i);
-	// Start timer
-	*TIMER1_CMD = 1;
-}
-
-// Handle button presses
-void handleButtons() {
-	// Read current button values.
+// TODO: Hvorfor bor denne her? Bør i ex2.c
+void loop() {
 	int buttons = 0;
-	buttons = *GPIO_PC_DIN;
-	// Check for button 1, 2 or 3, and start respective sound.
-	if ((buttons & 0x1) == 0){
-		start_sound(1);
-	}
-	if ((buttons & 0x2) == 0){
-		start_sound(2);
-	}
-	if ((buttons & 0x4) == 0){
-		start_sound(3);
+	
+	while (1) {
+		buttons = *GPIO_PC_DIN;
+		if ((buttons & 0x1) == 0){
+			play_sound(1);
+		}
+		if ((buttons & 0x2) == 0){
+			play_sound(2);
+		}
+		if ((buttons & 0x4) == 0){
+			play_sound(3);
+		}
 	}
 }
 
-// Initiate variables for end-of-sound detection.
-uint32_t prev_val = 0;
-unsigned int counter = 0;
-
-// TIMER1 interrupt handler 
+/* TIMER1 interrupt handler */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler()
 {
-	// Get next sample and write it to DAC:
+	/*
+	   TODO feed new samples to the DAC
+	   remember to clear the pending interrupt by writing 1 to TIMER1_IFC
+	 */
+	//srand(14);
 	uint32_t val = sound();	
+//	double val = volume * ((sin((time)/p) + 1.0f)/2.0f);
 	*DAC0_CH0DATA = (uint32_t)val;
  	*DAC0_CH1DATA = (uint32_t)val;
-	// Check if we have silence for more than TIMEOUT samples
-	if(val == prev_val){
-		counter+=1;
-	} else {
-		counter=0;
-	}
-	if(counter > TIMEOUT){
-		// If we have long silence, disable timer and enter deep sleep.
-		counter = 0;
-		*TIMER1_CMD = 2;
-		*SCR = 6;
-	}
-	prev_val = val;
 	*TIMER1_IFC = 1;
 }
 
-// GPIO even pin interrupt handler 
+// TODO Bruke disse for knapp, ikke loop
+
+/* GPIO even pin interrupt handler */
 void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler()
 {
-	handleButtons();
-	*GPIO_IFC = 0xff;
+	/* TODO handle button pressed event, remember to clear pending interrupt */
 }
 
-// GPIO odd pin interrupt handler 
+/* GPIO odd pin interrupt handler */
 void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 {
-	handleButtons();
-	*GPIO_IFC = 0xff;
+	/* TODO handle button pressed event, remember to clear pending interrupt */
 }
