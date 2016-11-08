@@ -1,0 +1,7 @@
+## SECTION=project_specific
+
+config SOUND_PROG
+	tristate
+	prompt "sound-prog"
+	help
+	  FIXME
