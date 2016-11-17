@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=/home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/sysroot-host
+prefix=/tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/platform-energymicro-efm32gg-dk3750/sysroot-host
 exec_prefix=${prefix}
 exec_prefix_set=no
 

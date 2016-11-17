@@ -8,6 +8,12 @@
 #include <linux/fs.h>
 #include <linux/errno.h>
 #include <linux/cdev.h>
+#include <linux/device.h>
+#include <linux/uaccess.h>
+#include <linux/ioport.h>
+#include <linux/io.h>
+
+#include "efm32gg.h"
 
 /*
  * template_init - function to insert this module into kernel space
@@ -18,18 +24,15 @@
  * Returns 0 if successfull, otherwise -1
  */
 
-
-static int my_open(struct inode *inode, struct file *filp){
-
-}
-
-static int my_release(struct inode *inode, struct file *filp){
-
-}
+char current_state;
 
 static ssize_t my_read(struct file *filp, char __user *buff, size_t count,
         loff_t *offp){
-    return count;
+	if(count > 1){
+		current_state = ioread32(GPIO_PC_DIN); 
+		copy_to_user(buff, &current_state, 1);
+		return 1;
+	} return 0;
 }
 
 static ssize_t my_write(struct file *filp, const char __user *buff,
@@ -42,8 +45,8 @@ static struct file_operations my_fops = {
     .owner = THIS_MODULE,
     .read = my_read,
     .write = my_write,
-    .open = my_open,
-    .release = my_release
+    .open = NULL,
+    .release = NULL
 };
 
 dev_t device;
@@ -54,12 +57,27 @@ static int __init my_init(void)
 {
     int error = 0;
 	
+	printk("Driver version 3\n");
     printk("Loading gamepad driver.\nAllocating chrdev_region...\n");
     if(error = alloc_chrdev_region(&device, 0, 1, "gamepad"))
         return error;
 
     printk("Initializing cdev struct...\n");
     cdev_init(&my_cdev, &my_fops);
+
+	printk("Requesting IO-memory...\n");
+	if(!request_mem_region(GPIO_PC_MODEL, 4, "gamepad"))
+		return -1;
+	if(!request_mem_region(GPIO_PC_DOUT, 4, "gamepad"))
+		return -1;
+	if(!request_mem_region(GPIO_PC_DIN, 4, "gamepad"))
+		return -1;
+
+	printk("Setting up GPIO...\n");
+	// Pull-up resistors
+	iowrite32(0xff, GPIO_PC_DOUT);
+	// Input mode
+	iowrite32(0x22222222, GPIO_PC_MODEL);
 
     printk("Adding cdev...\n");
     if(error = cdev_add(&my_cdev, device, 1))
@@ -81,12 +99,15 @@ static int __init my_init(void)
 static void __exit my_exit(void)
 {
 	 printk("Unloading gamepad driver...\n");
+	 release_mem_region(GPIO_PC_MODEL, 4);
+	 release_mem_region(GPIO_PC_DOUT, 4);
+	 release_mem_region(GPIO_PC_DIN, 4);
      unregister_chrdev_region(device, 1);
 }
 
 module_init(my_init);
 module_exit(my_exit);
 
-MODULE_DESCRIPTION("Small module, demo only, not very useful.");
+MODULE_DESCRIPTION("Driver for gamepad buttons");
 MODULE_LICENSE("GPL");
 

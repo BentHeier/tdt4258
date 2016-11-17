@@ -1,8 +1,9 @@
+kernel.get : linux-3.12-rc4.tar.xz
+kernel.extract : kernel.get
 base.get : 
 base.extract : base.get
 cross-dummy-strip.get : 
 cross-dummy-strip.extract : cross-dummy-strip.get
-pkg-config-0.25.tar.gz : 
 host-pkg-config.get : pkg-config-0.25.tar.gz
 host-pkg-config.extract : host-pkg-config.get
 host-pkg-config.extract.post : host-pkg-config.extract
@@ -18,12 +19,10 @@ cross-dummy-strip.compile : cross-dummy-strip.prepare
 cross-dummy-strip.install : cross-dummy-strip.compile
 cross-dummy-strip.install.pack : cross-dummy-strip.install
 cross-dummy-strip.install.post : cross-dummy-strip.install.pack
-fakeroot_1.14.4.orig.tar.bz2 : 
 host-fakeroot.get : fakeroot_1.14.4.orig.tar.bz2
 host-fakeroot.extract : host-fakeroot.get
 host-acl.get : acl-2.2.49.src.tar.gz
 host-acl.extract : host-acl.get
-attr-2.4.46.src.tar.gz : 
 host-attr.get : attr-2.4.46.src.tar.gz
 host-attr.extract : host-attr.get
 host-attr.extract.post : virtual-host-tools.install
@@ -44,7 +43,6 @@ host-fakeroot.compile : host-fakeroot.prepare
 host-fakeroot.install : host-fakeroot.compile
 host-fakeroot.install.pack : host-fakeroot.install
 host-fakeroot.install.post : host-fakeroot.install.pack
-ipkg-utils-050831.tar.gz : 
 host-ipkg-utils.get : ipkg-utils-050831.tar.gz
 host-ipkg-utils.extract : host-ipkg-utils.get
 host-ipkg-utils.extract.post : virtual-host-tools.install
@@ -90,31 +88,6 @@ geckoboot.install.pack : geckoboot.install
 geckoboot.install.post : geckoboot.install.pack
 geckoboot.targetinstall : geckoboot.install.post
 geckoboot.targetinstall.post : geckoboot.targetinstall
-init.get : 
-init.extract : init.get
-init.extract.post : base.install
-init.prepare : init.extract.post
-init.compile : init.prepare
-init.install : init.compile
-init.install.pack : init.install
-init.install.post : init.install.pack
-init.targetinstall : init.install.post
-init.targetinstall.post : init.targetinstall
-fbtest-20041102-1.tar.gz : 
-fbtest.get : fbtest-20041102-1.tar.gz
-fbtest.extract : fbtest.get
-fbtest.extract.post : base.install
-fbtest.prepare : fbtest.extract.post
-fbtest.compile : fbtest.prepare
-fbtest.install : fbtest.compile
-fbtest.install.pack : fbtest.install
-fbtest.install.post : fbtest.install.pack
-fbtest.targetinstall : fbtest.install.post
-fbtest.targetinstall.post : fbtest.targetinstall
-linux-3.12-rc4.tar.xz : 
-kernel.get : linux-3.12-rc4.tar.xz
-kernel.extract : kernel.get
-kmod-13.tar.xz : 
 host-libkmod.get : kmod-13.tar.xz
 host-libkmod.extract : host-libkmod.get
 host-libkmod.extract.post : virtual-host-tools.install
@@ -130,11 +103,9 @@ kernel.install : kernel.compile
 kernel.install.pack : kernel.install
 kernel.install.post : kernel.install.pack
 kernel.targetinstall : kernel.install.post
-driver-gamepad.get : 
-lndir-1.0.2.tar.bz2 : 
+sound-driver.get : 
 host-lndir.get : lndir-1.0.2.tar.bz2
 host-lndir.extract : host-lndir.get
-xproto-7.0.23.tar.bz2 : 
 host-xorg-proto-x.get : xproto-7.0.23.tar.bz2
 host-xorg-proto-x.extract : host-xorg-proto-x.get
 host-xorg-proto-x.extract.post : virtual-host-tools.install
@@ -149,9 +120,41 @@ host-lndir.compile : host-lndir.prepare
 host-lndir.install : host-lndir.compile
 host-lndir.install.pack : host-lndir.install
 host-lndir.install.post : host-lndir.install.pack
+sound-driver.extract : host-lndir.install.post
+sound-driver.extract.post : base.install
+sound-driver.prepare : sound-driver.extract.post
+sound-driver.compile : sound-driver.prepare
+sound-driver.install : sound-driver.compile
+sound-driver.install.pack : sound-driver.install
+sound-driver.install.post : sound-driver.install.pack
+sound-driver.targetinstall : sound-driver.install.post
+sound-driver.targetinstall.post : sound-driver.targetinstall
+init.get : 
+init.extract : init.get
+init.extract.post : base.install
+init.prepare : init.extract.post
+init.compile : init.prepare
+init.install : init.compile
+init.install.pack : init.install
+init.install.post : init.install.pack
+init.targetinstall : init.install.post
+init.targetinstall.post : init.targetinstall
+fbtest.get : fbtest-20041102-1.tar.gz
+fbtest.extract : fbtest.get
+fbtest.extract.post : base.install
+fbtest.prepare : fbtest.extract.post
+fbtest.compile : fbtest.prepare
+fbtest.install : fbtest.compile
+fbtest.install.pack : fbtest.install
+fbtest.install.post : fbtest.install.pack
+fbtest.targetinstall : fbtest.install.post
+fbtest.targetinstall.post : fbtest.targetinstall
+driver-gamepad.get : 
 driver-gamepad.extract : host-lndir.install.post
 driver-gamepad.extract.post : base.install
 driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
 driver-gamepad.compile : driver-gamepad.prepare
 driver-gamepad.install : driver-gamepad.compile
 driver-gamepad.install.pack : driver-gamepad.install
@@ -165,11 +168,11 @@ dtc.prepare : dtc.extract.post
 dtc.compile : dtc.prepare
 dtc.install : dtc.compile
 efm32gg-dk3750.dtb : dtc.install
+kernel.targetinstall.post : linuximage
 dtc.install.pack : dtc.install
 dtc.install.post : dtc.install.pack
 dtc.targetinstall : kernel.targetinstall
 dtc.targetinstall.post : dtc.targetinstall
-kernel.targetinstall.post : linuximage
 game.get : 
 game.extract : game.get
 game.extract.post : base.install
@@ -181,7 +184,6 @@ game.install.post : game.install.pack
 game.targetinstall : game.install.post
 game.targetinstall.post : game.targetinstall
 host-system-perl.targetinstall.post : 
-busybox-1.21.0.tar.bz2 : 
 busybox.get : busybox-1.21.0.tar.bz2
 busybox.extract : busybox.get
 busybox.extract.post : base.install
@@ -194,7 +196,6 @@ busybox.targetinstall : busybox.install.post
 busybox.targetinstall.post : busybox.targetinstall
 rootfs.get : 
 rootfs.extract : rootfs.get
-figlet-2.2.5.tar.gz : 
 host-figlet.get : figlet-2.2.5.tar.gz
 host-figlet.extract : host-figlet.get
 host-figlet.extract.post : virtual-host-tools.install
@@ -211,7 +212,6 @@ rootfs.install.pack : rootfs.install
 rootfs.install.post : rootfs.install.pack
 rootfs.targetinstall : rootfs.install.post
 rootfs.targetinstall.post : rootfs.targetinstall
-ipkg-0.99.163.tar.gz : 
 host-ipkg.get : ipkg-0.99.163.tar.gz
 host-ipkg.extract : host-ipkg.get
 host-ipkg.extract.post : virtual-host-tools.install
@@ -220,7 +220,6 @@ host-ipkg.compile : host-ipkg.prepare
 host-ipkg.install : host-ipkg.compile
 host-ipkg.install.pack : host-ipkg.install
 host-ipkg.install.post : host-ipkg.install.pack
-genromfs-0.5.2.tar.gz : 
 host-genromfs.get : genromfs-0.5.2.tar.gz
 host-genromfs.extract : host-genromfs.get
 host-genromfs.extract.post : virtual-host-tools.install
@@ -237,22 +236,159 @@ host-energyawaretools.compile : host-energyawaretools.prepare
 host-energyawaretools.install : host-energyawaretools.compile
 host-energyawaretools.install.pack : host-energyawaretools.install
 host-energyawaretools.install.post : host-energyawaretools.install.pack
-world.targetinstall : base.targetinstall.post os-release.targetinstall.post geckoboot.targetinstall.post init.targetinstall.post fbtest.targetinstall.post driver-gamepad.targetinstall.post dtc.targetinstall.post kernel.targetinstall.post game.targetinstall.post host-system-perl.targetinstall.post busybox.targetinstall.post rootfs.targetinstall.post host-acl.install.post host-ipkg.install.post host-genromfs.install.post host-ipkg-utils.install.post host-fakeroot.install.post host-figlet.install.post host-pkg-config.install.post host-libkmod.install.post host-attr.install.post host-energyawaretools.install.post cross-pkg-config-wrapper.install.post cross-dummy-strip.install.post
-os-release.targetinstall : os-release.install.post
-os-release.targetinstall.post : os-release.targetinstall
-sound-prog.get : 
-sound-prog.extract : sound-prog.get
-os-release.targetinstall : os-release.install.post
-os-release.targetinstall.post : os-release.targetinstall
-sound-driver.get : 
-sound-driver.extract : host-lndir.install.post
-sound-driver.extract.post : base.install
-sound-driver.prepare : sound-driver.extract.post
-sound-driver.compile : sound-driver.prepare
-sound-driver.install : sound-driver.compile
-sound-driver.install.pack : sound-driver.install
-sound-driver.install.post : sound-driver.install.pack
-sound-driver.targetinstall : sound-driver.install.post
-sound-driver.targetinstall.post : sound-driver.targetinstall
-kernel.targetinstall.post : linuximage
 world.targetinstall : base.targetinstall.post os-release.targetinstall.post geckoboot.targetinstall.post sound-driver.targetinstall.post init.targetinstall.post fbtest.targetinstall.post driver-gamepad.targetinstall.post kernel.targetinstall.post dtc.targetinstall.post game.targetinstall.post host-system-perl.targetinstall.post busybox.targetinstall.post rootfs.targetinstall.post host-acl.install.post host-ipkg.install.post host-genromfs.install.post host-ipkg-utils.install.post host-fakeroot.install.post host-figlet.install.post host-pkg-config.install.post host-libkmod.install.post host-attr.install.post host-energyawaretools.install.post cross-pkg-config-wrapper.install.post cross-dummy-strip.install.post
+driver-gamepad.clean : FORCE
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.clean : FORCE
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage
+driver-gamepad.clean : FORCE
+driver-gamepad.get : 
+driver-gamepad.extract : host-lndir.install.post
+driver-gamepad.extract.post : base.install
+driver-gamepad.prepare : driver-gamepad.extract.post
+driver-gamepad.compile : driver-gamepad.prepare
+driver-gamepad.install : driver-gamepad.compile
+driver-gamepad.install.pack : driver-gamepad.install
+driver-gamepad.install.post : driver-gamepad.install.pack
+driver-gamepad.targetinstall : driver-gamepad.install.post
+driver-gamepad.targetinstall.post : driver-gamepad.targetinstall
+kernel.targetinstall.post : linuximage

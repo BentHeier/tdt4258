@@ -137,10 +137,10 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/libsepol.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/upstart.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/dash.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-proto-render.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/geckoboot.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/geckoboot.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/libqxt.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-unfs3.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/host-genromfs.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/host-genromfs.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-xorg-lib-Xfont.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/lite.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/networkmanager.make
@@ -205,7 +205,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-e2fsprogs.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/pureftpd.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-xorg-app-xkbcomp.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/frodo.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/sound-prog.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/sound-prog.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/directfb-examples.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/liblockfile.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/dhcp.make
@@ -220,7 +220,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/kernel-header.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xmlbench.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/mpg123.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/libffi.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/sound-driver.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/sound-driver.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-font-arphic-uming.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-driver-video-vesa.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-driver-video-intel.make
@@ -229,7 +229,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-flex.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/base-pkgs.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/gnupg.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-qemu.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/init.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/init.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-glib.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xli.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/u-boot.make
@@ -358,7 +358,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/microcom.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/dnsmasq.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-proto-evieext.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/fluxbox.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/driver-gamepad.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/driver-gamepad.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-makedepend.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/gnuplot.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-driver-input-void.make
@@ -535,7 +535,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/svgalib.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-font-ibm-type1.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-data-xbitmaps.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/tiobench.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/game.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/game.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-font-bitstream-type1.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/wireshark.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-libffi.make
@@ -679,7 +679,7 @@ include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/libcgroup.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/xorg-lib-SM.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-libselinux.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/ltp-hpi.make
-include /home/tdt4258/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/host-energyAwareTools.make
+include /tmp/tdt4258/oving3/OSELAS.BSP-EnergyMicro-Gecko/rules/host-energyAwareTools.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/owfs.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/host-localedef.make
 include /opt/ex3/ptxdist-2013/lib/ptxdist-2013.07.1/rules/ncftp.make
