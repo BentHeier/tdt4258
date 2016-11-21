@@ -23,9 +23,8 @@ int round = 0;
 uint16_t *frameBuffer;
 
 // Updates the game logic. Call this UPDATES_PER_SECOND times a second.
-// uint8_t gamepadInput: Contains which gamepad buttons are pressed. Assumes the 8 least significant bits holds the data
-//                        for the 8 buttons. The leftmost of these bits is for button 0, the next for button 1 etc. The bit
-//				          should be set to 1 if the button is pressed and 0 otherwise.
+// uint8_t gamepadInput: Contains which gamepad buttons are pressed. The rightmost of these bits is for button 0,
+//                       the next for button 1 etc. The bit should be set to 1 if the button is pressed and 0 otherwise.
 void gameUpdate(uint8_t gamepadInput) {
 	switch (gameState) {
 	
