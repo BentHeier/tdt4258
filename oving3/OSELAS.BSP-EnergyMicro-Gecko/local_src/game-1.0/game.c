@@ -4,10 +4,25 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <math.h>
 #include <time.h>
+#include <sys/ioctl.h>
+#include <sys/mman.h>
+#include <linux/fb.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "game.h"
+
+float sqrt(float z){
+    int val_int = *(int *)&z;
+    val_int -= 1 << 23;
+    val_int >>= 1;
+    val_int += 1 << 29;
+
+    return *(float *)&val_int;
+}
 
 int gameState = 0;
 int game_finished = 0;
@@ -19,7 +34,7 @@ int leftBatYPrevious, rightBatYPrevious;
 float ballX, ballY;
 float ballXPrevious, ballYPrevious;
 float ballVelocityX, ballVelocityY;
-int round = 0;
+int turn = 0;
 uint16_t *frameBuffer;
 
 // Updates the game logic. Call this UPDATES_PER_SECOND times a second.
@@ -27,6 +42,8 @@ uint16_t *frameBuffer;
 //                        for the 8 buttons. The leftmost of these bits is for button 0, the next for button 1 etc. The bit
 //				          should be set to 1 if the button is pressed and 0 otherwise.
 void gameUpdate(uint8_t gamepadInput) {
+    int i, x, y;
+    float ballVelocityLength;
 	switch (gameState) {
 	
 		// Game start state
@@ -46,7 +63,7 @@ void gameUpdate(uint8_t gamepadInput) {
 				ballY = GAME_HEIGHT / 2;
 				
 				// Sets a velocity for the ball.
-				switch (round % 4) {
+				switch (turn % 4) {
 					case 0: ballVelocityX = 0.707 * BALL_SPEED; ballVelocityY = 0.707 * BALL_SPEED; break;
 					case 1: ballVelocityX = -0.707 * BALL_SPEED; ballVelocityY = 0.707 * BALL_SPEED; break;
 					case 2: ballVelocityX = 0.707 * BALL_SPEED; ballVelocityY = -0.707 * BALL_SPEED; break;
@@ -54,7 +71,7 @@ void gameUpdate(uint8_t gamepadInput) {
 				}
 				
 				// Clears the screen to the background color.
-				for (int i = 0; i < GAME_WIDTH * GAME_HEIGHT; i += 1) {
+				for (i = 0; i < GAME_WIDTH * GAME_HEIGHT; i += 1) {
 					frameBuffer[i] = BACKGROUND_COLOR;
 				}
 				gameFrameBufferWasUpdated(0, 0, GAME_WIDTH, GAME_HEIGHT);
@@ -74,7 +91,7 @@ void gameUpdate(uint8_t gamepadInput) {
 			// If the startup timer is done, let the players control the bats and update the ball.
 			if (timerStartDelay == 0) {
 				// Lets the players control the bats with the upper and lower buttons on the gamepad.
-				leftBatY += ((gamepadInput & BUTTON_LEFT_DOWN) 
+				leftBatY += ((gamepadInput & BUTTON_LEFT_DOWN)
                         - (gamepadInput & BUTTON_LEFT_UP)) * BAT_SPEED;
 				rightBatY += ((gamepadInput & BUTTON_RIGHT_DOWN)
                         - (gamepadInput & BUTTON_RIGHT_UP)) * BAT_SPEED;
@@ -114,14 +131,14 @@ void gameUpdate(uint8_t gamepadInput) {
 						ballX = leftBatX + 1;
 						ballVelocityX = BAT_HEIGHT / 2;
 						ballVelocityY = ballY - leftBatY;
-						float ballVelocityLength = sqrt(ballVelocityX * ballVelocityX + ballVelocityY * ballVelocityY);
+						ballVelocityLength = sqrt(ballVelocityX * ballVelocityX + ballVelocityY * ballVelocityY);
 						ballVelocityX /= ballVelocityLength; ballVelocityY /= ballVelocityLength;
 						ballVelocityX *= BALL_SPEED; ballVelocityY *= BALL_SPEED;
 					} else if (ballX >= rightBatX && ballX - ballVelocityX < rightBatX && ballY >= rightBatY - BAT_HEIGHT / 2 && ballY <= rightBatY + (BAT_HEIGHT / 2 - 1)) {
 						ballX = rightBatX - 1;
 						ballVelocityX = BAT_HEIGHT / 2;
 						ballVelocityY = ballX - rightBatX;
-						float ballVelocityLength = sqrt(ballVelocityX * ballVelocityX + ballVelocityY * ballVelocityY);
+						ballVelocityLength = sqrt(ballVelocityX * ballVelocityX + ballVelocityY * ballVelocityY);
 						ballVelocityX /= ballVelocityLength; ballVelocityY /= ballVelocityLength;
 						ballVelocityX *= BALL_SPEED; ballVelocityY *= BALL_SPEED;
 					}
@@ -132,38 +149,38 @@ void gameUpdate(uint8_t gamepadInput) {
 			
 			// Updates the areas in the frame buffer where the bats and ball are by setting the old areas to the background color,
 			// and the new ones to the bat and ball colors.
-			for (int y = leftBatYPrevious - BAT_GRAPHICS_HEIGHT / 2; y < leftBatYPrevious + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = leftBatXPrevious - BAT_GRAPHICS_WIDTH / 2; x < leftBatXPrevious + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			for (y = leftBatYPrevious - BAT_GRAPHICS_HEIGHT / 2; y < leftBatYPrevious + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = leftBatX- BAT_GRAPHICS_WIDTH / 2; x < leftBatX+ BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = BACKGROUND_COLOR;
 				}
 			}
-			gameFrameBufferWasUpdated(leftBatXPrevious, leftBatYPrevious, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
-			for (int y = rightBatYPrevious - BAT_GRAPHICS_HEIGHT / 2; y < rightBatYPrevious + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = rightBatXPrevious - BAT_GRAPHICS_WIDTH / 2; x < rightBatXPrevious + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			gameFrameBufferWasUpdated(leftBatX, leftBatYPrevious, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
+			for (y = rightBatYPrevious - BAT_GRAPHICS_HEIGHT / 2; y < rightBatYPrevious + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = rightBatX - BAT_GRAPHICS_WIDTH / 2; x < rightBatX + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = BACKGROUND_COLOR;
 				}
 			}
-			gameFrameBufferWasUpdated(rightBatXPrevious, rightBatYPrevious, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
-			for (int y = ballYPrevious - BALL_GRAPHICS_HEIGHT / 2; y < ballYPrevious + BALL_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = ballXPrevious - BALL_GRAPHICS_WIDTH / 2; x < ballXPrevious + BALL_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			gameFrameBufferWasUpdated(rightBatX, rightBatYPrevious, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
+			for (y = ballYPrevious - BALL_GRAPHICS_HEIGHT / 2; y < ballYPrevious + BALL_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = ballXPrevious - BALL_GRAPHICS_WIDTH / 2; x < ballXPrevious + BALL_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = BACKGROUND_COLOR;
 				}
 			}
 			gameFrameBufferWasUpdated(ballXPrevious, ballYPrevious, BALL_GRAPHICS_WIDTH, BALL_GRAPHICS_HEIGHT);
-			for (int y = leftBatY - BAT_GRAPHICS_HEIGHT / 2; y < leftBatY + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = leftBatX - BAT_GRAPHICS_WIDTH / 2; x < leftBatX + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			for (y = leftBatY - BAT_GRAPHICS_HEIGHT / 2; y < leftBatY + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = leftBatX - BAT_GRAPHICS_WIDTH / 2; x < leftBatX + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = LEFT_BAT_COLOR;
 				}
 			}
 			gameFrameBufferWasUpdated(leftBatX, leftBatY, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
-			for (int y = rightBatY - BAT_GRAPHICS_HEIGHT / 2; y < rightBatY + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = rightBatX - BAT_GRAPHICS_WIDTH / 2; x < rightBatX + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			for (y = rightBatY - BAT_GRAPHICS_HEIGHT / 2; y < rightBatY + BAT_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = rightBatX - BAT_GRAPHICS_WIDTH / 2; x < rightBatX + BAT_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = RIGHT_BAT_COLOR;
 				}
 			}
 			gameFrameBufferWasUpdated(rightBatX, rightBatY, BAT_GRAPHICS_WIDTH, BAT_GRAPHICS_HEIGHT);
-			for (int y = ballY - BALL_GRAPHICS_HEIGHT / 2; y < ballY + BALL_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
-				for (int x = ballX - BALL_GRAPHICS_WIDTH / 2; x < ballX + BALL_GRAPHICS_WIDTH / 2 - 1; x += 1) {
+			for (y = ballY - BALL_GRAPHICS_HEIGHT / 2; y < ballY + BALL_GRAPHICS_HEIGHT / 2 - 1; y += 1) {
+				for (x = ballX - BALL_GRAPHICS_WIDTH / 2; x < ballX + BALL_GRAPHICS_WIDTH / 2 - 1; x += 1) {
 					frameBuffer[y * GAME_WIDTH + x] = BALL_COLOR;
 				}
 			}
@@ -172,9 +189,9 @@ void gameUpdate(uint8_t gamepadInput) {
 			
 		// Game end state
 		case 2:
-			// If the end timer is done, go to the next round.
+			// If the end timer is done, go to the next turn.
 			if (timerEndDelay == 0) {
-				round += 1;
+				turn += 1;
 				gameState = 0;
 			} else {
 				timerEndDelay -= 1;
@@ -201,12 +218,12 @@ void gameFrameBufferWasUpdated(int x, int y, int width, int height) {
 
 // Returns a pointer to where the frame begins. The frame is composed of GAME_WIDTH * GAME_HEIGHT uint16_ts.
 // Every uint16_t contains 5 bits of red, 6 bits of green, and 5 bits of blue (in that order with red being most significant).
-uint16_t* gameGetFrameBuffer() {	
+uint16_t *gameGetFrameBuffer() {	
 	return frameBuffer;
 }
 
 
-int init_gfx(WIDTH, HEIGHT, uint16_t *buffer){
+int init_gfx(int width, int height, uint16_t *buffer){
 
     fb_handle = open("/dev/fb0", O_RDWR);
     if(fb_handle < 0){
@@ -214,28 +231,36 @@ int init_gfx(WIDTH, HEIGHT, uint16_t *buffer){
         return -1;
     }
 
-    frameBuffer = (uint16_t *)mmap(NULL, WIDTH*HEIGHT*2,
+    frameBuffer = (uint16_t *)mmap(NULL, width*height*2,
             PROT_READ | PROT_WRITE, MAP_SHARED, fb_handle, 0);
+    return 0;
 }
 
 void cleanup(){
-    munmap(frameBuffer, WIDTH*HEIGHT*2);
+    munmap(frameBuffer, GAME_WIDTH*GAME_HEIGHT*2);
     close(fb_handle);
     fclose(gamepad);
 }
 
+void printBtns(uint8_t state){
+    printf("state: %d\n", state);
+}
+
 int main(int argc, char **argv){
     uint8_t btn_state;
+    struct timespec sleepValue = {0};
+    sleepValue.tv_nsec = 1000000000/UPDATES_PER_SECOND;
 
     init_gfx(GAME_WIDTH, GAME_HEIGHT, frameBuffer);
     
-    gamepad = fopen("/dev/gamepad", "r");
+    gamepad = fopen("/dev/gamepad", "rb");
 
     while(!game_finished){
-        fread(&btn_state, 1, 1, gamepad);
+        btn_state = fgetc(gamepad);
         gameUpdate(btn_state);
-        nanosleep(0,1000000000/UPDATES_PER_SECOND);
+        nanosleep(&sleepValue, NULL);
     }
 
     cleanup();
+    return 0;
 }

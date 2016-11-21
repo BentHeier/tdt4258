@@ -16,7 +16,9 @@
 #define BAT_GRAPHICS_WIDTH 4 // Should be an even number.
 #define BAT_GRAPHICS_HEIGHT BAT_HEIGHT
 
-#define BUTTON_LEFT_UP = (1 << 1)
-#define BUTTON_LEFT_DOWN = (1 << 3)
-#define BUTTON_RIGHT_UP = (1 << 5)
-#define BUTTON_RIGHT_DOWN = (1 << 7)
+#define BUTTON_LEFT_UP (1 << 1)
+#define BUTTON_LEFT_DOWN (1 << 3)
+#define BUTTON_RIGHT_UP (1 << 5)
+#define BUTTON_RIGHT_DOWN (1 << 7)
+
+void gameFrameBufferWasUpdated(int x, int y, int width, int height);
